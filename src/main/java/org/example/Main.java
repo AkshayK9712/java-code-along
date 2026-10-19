@@ -1,7 +1,40 @@
 package org.example;
 
+import java.util.ArrayList;
+
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 class WeatherData {
-    // TODO: implement the WeatherData class (see Exercise 2)
+
+    private String date;
+    private double temperature;
+    private double humidity;
+
+    public WeatherData(String date,double temperature,double humidity){
+        this.date = date;
+        this.temperature = temperature;
+        this.humidity = humidity;
+
+    }
+    public String getDate(){
+        return date;
+    }
+    public double getTemperature(){
+        return temperature;
+    }
+    public double getHumidity(){
+        return humidity;
+    }
+
+    public boolean isHotDay(){
+        return temperature>30;
+    }
+    public boolean isHumidDay(){
+        return humidity > 70;
+    }
 }
 
 // This is the main class of our Weather Data Analyzer program
@@ -50,7 +83,13 @@ public class Main {
      * - Print each of these variables to the console.
      */
     public static void basicDataTypesExercise() {
-        // TODO: Declare and assign values to variables
+        int dayNumber = 12;
+        double temperature = 28.5;
+        String weatherDescription = "Sunny";
+
+        System.out.println("Day Number: " + dayNumber);
+        System.out.println("Temperature: " + temperature);
+        System.out.println("Weather Description: " + weatherDescription);
     }
 
     /**
@@ -73,7 +112,8 @@ public class Main {
      * (Note: The actual implementation of this exercise will be in the class defined above)
      */
     public static void createWeatherDataClass() {
-        // TODO: Implement the WeatherData class above
+        // The WeatherData class is defined above. Please implement it as per the instructions.
+        
     }
 
     /**
@@ -87,7 +127,10 @@ public class Main {
      * - Use the getter methods to retrieve the values from the object and print them to the console.
      */
     public static void createWeatherDataObject() {
-        // TODO: Create a WeatherData object and print its values
+        WeatherData weatherData = new WeatherData("19-10-2026", 29.0, 56.0);
+        System.out.println("Date:" + weatherData.getDate());
+        System.out.println("Temperature:" + weatherData.getTemperature());
+        System.out.println("Humidity:" + weatherData.getHumidity());
     }
 
     /**
@@ -102,7 +145,10 @@ public class Main {
      * - Print out whether it is a hot day and/or a humid day.
      */
     public static void analyzeSingleDayWeather() {
-        // TODO: Implement the isHotDay() and isHumidDay() methods in the WeatherData class
+        WeatherData weatherData = new WeatherData("19-10-2026", 29.0, 56.0);
+        System.out.println("Is hot day ? " + weatherData.isHotDay());
+        System.out.println("Is humid day ? " + weatherData.isHumidDay());
+
     }
 
     /**
@@ -116,8 +162,14 @@ public class Main {
      * - In this method, create an array of WeatherData objects, call `calculateAverageTemperature`, and print the result.
      */
     public static void analyzeMultipleDaysWeather() {
-        // TODO: Create an array of WeatherData objects and implement a method to calculate the average temperature
-    }
+        WeatherData[] data = {
+                new WeatherData("19-10-2026", 29, 56),
+                new WeatherData("20-10-2026", 30, 75),
+                new WeatherData("21-10-2026", 31, 78)
+        };
+        double avgTemperature = calculateAverageTemperature(data);
+        System.out.println("Average Temperature :" + avgTemperature);
+        }
 
     /**
      * Helper Method: Calculate the Average Temperature
@@ -125,7 +177,11 @@ public class Main {
      * This method takes an array of WeatherData objects and returns the average temperature.
      */
     public static double calculateAverageTemperature(WeatherData[] data) {
-        return 0;
+        double sum = 0;
+        for(WeatherData day: data){
+            sum += day.getTemperature(); 
+        }
+        return sum/data.length;
     }
 
     /**
@@ -139,7 +195,9 @@ public class Main {
      * - Print the average temperature from the CSV data to the console.
      */
     public static void analyzeWeatherDataFromCSV() {
-        // TODO: Implement the readWeatherDataFromCSV method and analyze the data
+        WeatherData[] csvData = readWeatherDataFromCSV("weather_data.csv");
+        double averageTemperature = calculateAverageTemperature(csvData);
+        System.out.println("Average Temperature from CSV : " + averageTemperature);
     }
 
     /**
@@ -148,7 +206,27 @@ public class Main {
      * This method reads data from a CSV file and returns an array of WeatherData objects.
      */
     public static WeatherData[] readWeatherDataFromCSV(String fileName) {
-        // TODO: Implement the logic to read from a CSV file
-        return null;
+        ArrayList<WeatherData> weatherDataList = new ArrayList<>();
+        try(BufferedReader br= new BufferedReader(new FileReader(fileName))){
+            String line;
+            br.readLine();
+            while((line = br.readLine()) != null){
+                String[] splitLine = line.split(",");
+
+                String date = splitLine[0];
+                double temperature = Double.parseDouble(splitLine[1]);
+                double humidity = Double.parseDouble(splitLine[2]);
+
+                WeatherData weatherData = new WeatherData(date, temperature, humidity);
+                weatherDataList.add(weatherData);
+
+
+            }
+
+        }
+        catch(IOException e){
+            System.out.println("An error occured " + e.getMessage());
+        }
+        return weatherDataList.toArray(new WeatherData[0]);
     }
 }
